@@ -12,6 +12,11 @@ const renderMarkdownToHtml = (markdown) => {
   htmlView.innerHTML = marked(markdown, { sanitize: true });
 };
 
+const loadContent = (content) => {
+  markdownView.value = content;
+  renderMarkdownToHtml(content);
+};
+
 markdownView.addEventListener('keyup', (event) => {
   const currentContent = event.target.value;
   renderMarkdownToHtml(currentContent);
