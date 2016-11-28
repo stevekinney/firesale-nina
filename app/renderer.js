@@ -1,3 +1,4 @@
+const { remote } = require('electron');
 const marked = require('marked');
 
 const markdownView = document.querySelector('#markdown');
@@ -20,4 +21,9 @@ const loadContent = (content) => {
 markdownView.addEventListener('keyup', (event) => {
   const currentContent = event.target.value;
   renderMarkdownToHtml(currentContent);
+});
+
+openFileButton.addEventListener('click', () => {
+  const file = remote.dialog.showOpenDialog();
+  console.log(file);
 });
