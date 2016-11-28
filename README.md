@@ -24,12 +24,12 @@ const { remote } = require('electron');
 
 ```js
 openFileButton.addEventListener('click', () => {
-  const file = remote.dialog.showOpenDialog();
-  console.log(file);
+  remote.dialog.showOpenDialog((files) => {
+    console.log(files);
+  });
 });
-
 ```
 
-Oh look, we see the file path in an array.
+Oh look, we see the file path in an array. Cool. Let's load it.
 
 

@@ -24,6 +24,7 @@ markdownView.addEventListener('keyup', (event) => {
 });
 
 openFileButton.addEventListener('click', () => {
-  const file = remote.dialog.showOpenDialog();
-  console.log(file);
+  remote.dialog.showOpenDialog((files) => {
+    console.log(files);
+  });
 });
