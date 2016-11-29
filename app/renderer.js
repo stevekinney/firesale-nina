@@ -101,3 +101,15 @@ markdownView.addEventListener('contextmenu', (event) => {
   event.preventDefault();
   markdownContextMenu.popup();
 });
+
+const renderedHtmlMenu = remote.Menu.buildFromTemplate([
+  {
+    label: 'Copy Rendered HTML',
+    click() { clipboard.writeText(htmlView.innerHTML); }
+  }
+]);
+
+htmlView.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+  renderedHtmlMenu.popup();
+});
