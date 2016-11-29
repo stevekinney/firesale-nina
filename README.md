@@ -211,3 +211,43 @@ saveHtmlButton.addEventListener('click', () => {
   });
 });
 ```
+
+### Extra Credit
+
+Context menus!
+
+```js
+const { remote, shell, clipboard } = require('electron');
+```
+
+
+```js
+const renderedHtmlMenu = remote.Menu.buildFromTemplate([
+  {
+    label: 'Copy Rendered HTML',
+    click() { clipboard.writeText(htmlView.innerHTML); }
+  }
+]);
+
+
+htmlView.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+  renderedHtmlMenu.popup();
+});
+```
+
+We also have access to custom roles:
+
+```js
+const markdownContextMenu = remote.Menu.buildFromTemplate([
+  { label: 'Cut', role: 'cut' },
+  { label: 'Copy', role: 'copy' },
+  { label: 'Paste', role: 'paste' },
+  { label: 'Select All', role: 'selectall' },
+]);
+
+markdownView.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+  markdownContextMenu.popup();
+});
+```

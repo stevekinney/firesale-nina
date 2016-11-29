@@ -1,4 +1,4 @@
-const { remote, shell } = require('electron');
+const { remote, shell, clipboard } = require('electron');
 const fs = require('fs');
 
 const marked = require('marked');
@@ -88,4 +88,16 @@ saveHtmlButton.addEventListener('click', () => {
       shell.showItemInFolder(file);
     });
   });
+});
+
+const markdownContextMenu = remote.Menu.buildFromTemplate([
+  { label: 'Cut', role: 'cut' },
+  { label: 'Copy', role: 'copy' },
+  { label: 'Paste', role: 'paste' },
+  { label: 'Select All', role: 'selectall' },
+]);
+
+markdownView.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+  markdownContextMenu.popup();
 });
