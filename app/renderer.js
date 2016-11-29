@@ -78,7 +78,7 @@ saveHtmlButton.addEventListener('click', () => {
     title: 'Save Markdown',
     defaultPath: remote.app.getPath('documents'),
     filters: [
-      { name: 'Markdown Files', extensions: ['md', 'markdown'] }
+      { name: 'HTML Files', extensions: ['html'] }
     ]
   }, (file) => {
     if (!file) { return; }
