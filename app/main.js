@@ -27,7 +27,8 @@ const openFile = () => {
 
   if (!files) { return; }
 
+  const file = files[0];
   const content = fs.readFileSync(files[0]).toString();
 
-  console.log(content);
+  mainWindow.webContents.send('file-opened', file, content);
 };
