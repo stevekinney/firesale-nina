@@ -8,14 +8,12 @@ app.on('ready', () => {
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  openFile();
-
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 });
 
-const openFile = () => {
+const openFile = exports.openFile = () => {
   const files = dialog.showOpenDialog({
     title: 'Open File',
     properties: [ 'openFile' ],
