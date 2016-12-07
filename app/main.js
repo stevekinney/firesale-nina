@@ -30,3 +30,34 @@ const openFile = exports.openFile = () => {
 
   mainWindow.webContents.send('file-opened', file, content);
 };
+
+const saveMarkdown = exports.saveMarkdown = (file, markdown) => {
+  file = file || dialog.showSaveDialog({
+    title: 'Save File',
+    defaultPath: app.getPath('desktop'),
+    buttonLabel: '😎',
+    filters: [
+      {name: 'Markdown Files', extensions: ['md', 'markdown']},
+    ]
+  });
+
+  if (!file) { return; }
+
+  fs.writeFileSync(file, markdown);
+  mainWindow.webContents.send('file-opened', file, markdown);
+};
+
+const saveHtml = exports.saveHtml = (html) => {
+  const file = dialog.showSaveDialog({
+    title: 'Save File',
+    defaultPath: app.getPath('desktop'),
+    buttonLabel: '😎',
+    filters: [
+      {name: 'HTML Files', extensions: ['html']},
+    ]
+  });
+
+  if (!file) { return; }
+
+  fs.writeFileSync(file, html);
+};

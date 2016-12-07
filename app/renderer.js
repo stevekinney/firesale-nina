@@ -1,8 +1,10 @@
 const { ipcRenderer, remote } = require('electron');
 const mainProcess = remote.require('./main');
+const currentWindow = remote.getCurrentWindow();
 const marked = require('marked');
 
-console.log(remote);
+let currentFile = null;
+let originalContent = '';
 
 const markdownView = document.querySelector('#markdown');
 const htmlView = document.querySelector('#html');
@@ -16,20 +18,48 @@ const renderMarkdownToHtml = (markdown) => {
   htmlView.innerHTML = marked(markdown, { sanitize: true });
 };
 
-const loadContent = (content) => {
+const loadContent = (file, content) => {
+  currentFile = file;
+  originalContent = content;
   markdownView.value = content;
   renderMarkdownToHtml(content);
+  updateUserInterface(content);
+};
+
+const updateUserInterface = (content) => {
+  const isChanged = content !== originalContent;
+
+  currentWindow.setDocumentEdited(isChanged);
+  saveMarkdownButton.disabled = !isChanged;
+
+  let title = 'Fire Sale';
+
+  if (currentFile) { title = currentFile; }
+  if (isChanged) { title += ' (Edited)'; }
+
+  currentWindow.setTitle(title);
 };
 
 markdownView.addEventListener('keyup', (event) => {
   const currentContent = event.target.value;
   renderMarkdownToHtml(currentContent);
+  updateUserInterface(currentContent);
 });
 
 openFileButton.addEventListener('click', () => {
   mainProcess.openFile();
 });
 
+saveMarkdownButton.addEventListener('click', () => {
+  mainProcess.saveMarkdown(currentFile, markdownView.value);
+});
+
+saveHtmlButton.addEventListener('click', () => {
+  mainProcess.saveHtml(htmlView.innerHTML);
+});
+
 ipcRenderer.on('file-opened', (event, file, content) => {
-  loadContent(content);
+  loadContent(file, content);
+  currentWindow.setRepresentedFilename(file);
+  remote.app.addRecentDocument(file);
 });
