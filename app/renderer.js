@@ -47,15 +47,15 @@ markdownView.addEventListener('keyup', (event) => {
 });
 
 openFileButton.addEventListener('click', () => {
-  mainProcess.openFile();
+  mainProcess.selectFile(currentWindow);
 });
 
 saveMarkdownButton.addEventListener('click', () => {
-  mainProcess.saveMarkdown(currentFile, markdownView.value);
+  mainProcess.saveMarkdown(currentWindow, currentFile, markdownView.value);
 });
 
 saveHtmlButton.addEventListener('click', () => {
-  mainProcess.saveHtml(htmlView.innerHTML);
+  mainProcess.saveHtml(currentWindow, htmlView.innerHTML);
 });
 
 ipcRenderer.on('file-opened', (event, file, content) => {

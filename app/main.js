@@ -1,20 +1,31 @@
 const { app, BrowserWindow, dialog } = require('electron');
 const fs = require('fs');
 
-let mainWindow = null;
+const windows = new Set();
 
 app.on('ready', () => {
-  mainWindow = new BrowserWindow();
-
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+  createWindow();
 });
 
-const openFile = exports.openFile = () => {
-  const files = dialog.showOpenDialog({
+const createWindow = () => {
+  let win = new BrowserWindow({ show: false });
+
+  windows.add(win);
+  
+  win.loadURL(`file://${__dirname}/index.html`);
+  
+  win.once('ready-to-show', () => win.show());
+  
+  win.on('closed', () => {
+    windows.delete(win);
+    win = null;
+  });
+  
+  return win;
+}
+
+const selectFile = exports.selectFile = (win) => {
+  const files = dialog.showOpenDialog(win, {
     title: 'Open File',
     properties: [ 'openFile' ],
     filters: [
@@ -24,15 +35,17 @@ const openFile = exports.openFile = () => {
   });
 
   if (!files) { return; }
+  
+  openFile(win, files[0]);
+}
 
-  const file = files[0];
-  const content = fs.readFileSync(files[0]).toString();
-
-  mainWindow.webContents.send('file-opened', file, content);
+const openFile = exports.openFile = (win, file) => {
+  const content = fs.readFileSync(file).toString();
+  win.webContents.send('file-opened', file, content);
 };
 
-const saveMarkdown = exports.saveMarkdown = (file, markdown) => {
-  file = file || dialog.showSaveDialog({
+const saveMarkdown = exports.saveMarkdown = (win, file, markdown) => {
+  file = file || dialog.showSaveDialog(win, {
     title: 'Save File',
     defaultPath: app.getPath('desktop'),
     buttonLabel: '😎',
@@ -44,11 +57,11 @@ const saveMarkdown = exports.saveMarkdown = (file, markdown) => {
   if (!file) { return; }
 
   fs.writeFileSync(file, markdown);
-  mainWindow.webContents.send('file-opened', file, markdown);
+  win.webContents.send('file-opened', file, markdown);
 };
 
-const saveHtml = exports.saveHtml = (html) => {
-  const file = dialog.showSaveDialog({
+const saveHtml = exports.saveHtml = (win, html) => {
+  const file = dialog.showSaveDialog(win, {
     title: 'Save File',
     defaultPath: app.getPath('desktop'),
     buttonLabel: '😎',
