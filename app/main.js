@@ -1,10 +1,48 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { 
+  app,
+  BrowserWindow,
+  dialog,
+  Menu 
+} = require('electron');
+
 const fs = require('fs');
 
 const windows = new Set();
 
 app.on('ready', () => {
   createWindow();
+  
+  const template = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Open File',
+          click(menuItem, focusedWindow) {
+            selectFile(focusedWindow);
+          },
+          accelerator: 'ControlOrCommand+O'
+        }
+      ]
+    }
+  ];
+  
+  if (process.platform === 'darwin') {
+    template.unshift({ label: 'Wowowowow' });
+  }
+  
+  const applicationMenu = Menu.buildFromTemplate(template);
+  
+  Menu.setApplicationMenu(applicationMenu);
+});
+
+app.on('will-finish-launching', () => {
+  app.on('open-file', (event, file) => {
+    const win = createWindow();
+    win.once('ready-to-show', () => {
+      openFile(win, file);
+    });
+  });
 });
 
 const createWindow = () => {
